@@ -1,12 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monkey Business Labs</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monkey Business Labs</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --grey: #1a1a1a;
+    --grey-mid: #2a2a2a;
+    --grey-light: #3a3a3a;
+    --avocado: #4a5c3a;
+    --avocado-soft: #6b7f5a;
+    --avocado-muted: #8a9e78;
+    --navy: #1e2d4a;
+    --navy-soft: #2e4066;
+    --navy-muted: #4a5e80;
+    --yellow: #f5c842;
+    --yellow-soft: #f7d46a;
+    --yellow-pale: #fae89a;
+    --white: #f8f6f0;
+    --white-soft: #e8e6e0;
+    --text-muted: #888880;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--black); color: var(--white); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; display: flex; overflow-x: hidden; }
+  .left-ribbon { width: 280px; min-width: 280px; background: var(--dark); border-right: 1px solid var(--grey-mid); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .skyscraper-scene { flex: 1; position: relative; background: linear-gradient(180deg, #0a0e1a 0%, #111622 40%, #1a1a1a 100%); overflow: hidden; }
+  .building { position: absolute; bottom: 0; background: var(--grey); }
+  .b1 { width: 40px; height: 200px; left: 20px; background: #161616; }
+  .b2 { width: 55px; height: 280px; left: 55px; background: #141414; }
+  .b3 { width: 45px; height: 320px; left: 105px; background: #181818; }
+  .b4 { width: 35px; height: 180px; left: 148px; background: #131313; }
+  .b5 { width: 60px; height: 360px; left: 178px; background: #0f0f0f; }
+  .b6 { width: 42px; height: 240px; left: 236px; background: #161616; }
+  .win { position: absolute; width: 6px; height: 8px; background: var(--yellow); opacity: 0.6; }
+  .win.off { background: var(--grey-light); opacity: 0.3; }
+  .win.navy { background: var(--navy-muted); opacity: 0.7; }
+  .gorilla { position: absolute; bottom: 160px; left: 165px; width: 80px; height: 100px; z-index: 10; animation: gorilla-sway 3s ease-in-out infinite; }
+  @keyframes gorilla-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+  .monkey { position: absolute; width: 28px; height: 32px; z-index: 8; }
+  .monkey-1 { bottom: 220px; left: 60px; animation: climb1 4s ease-in-out infinite; }
+  .monkey-2 { bottom: 300px; left: 110px; animation: climb2 5s ease-in-out infinite; }
+  .monkey-3 { bottom: 180px; left: 185px; animation: climb3 3.5s ease-in-out infinite; }
+  @keyframes climb1 { 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-15px) rotate(5deg)} }
+  @keyframes climb2 { 0%,100%{transform:translateY(0) rotate(5deg)} 50%{transform:translateY(-20px) rotate(-5deg)} }
+  @keyframes climb3 { 0%,100%{transform:translateY(0) rotate(-8deg)} 50%{transform:translateY(-10px) rotate(8deg)} }
+  .ribbon-logo { padding: 24px 20px 16px; border-bottom: 1px solid var(--grey-mid); background: var(--dark); z-index: 20; position: relative; }
+  .ribbon-logo .brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--yellow); }
+  .ribbon-logo .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-top: 4px; line-height: 1.5; }
+  .ribbon-logo .tagline span { color: var(--avocado-muted); }
+  .nav { padding: 20px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--dark); z-index: 20; position: relative; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s; font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--white-soft); border: 1px solid transparent; text-decoration: none; }
+  .nav-item:hover { background: var(--grey-mid); }
+  .nav-item.active { background: var(--grey); border-color: var(--grey-light); color: var(--yellow); }
+  .banana-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 16px; transform-origin: center; }
+  @keyframes spin360 { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+  .topbar { padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--grey-mid); background: var(--black); }
+  .topbar-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+  .status-dot { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--avocado-muted); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--avocado-muted); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .hero { padding: 60px 40px 40px; flex: 1; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--yellow); margin-bottom: 16px; font-weight: 500; }
+  .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.05; color: var(--white); margin-bottom: 8px; }
+  .hero-title .accent { color: var(--yellow); }
+  .hero-title .avocado { color: var(--avocado-muted); }
+  .hero-sub { font-size: 15px; color: var(--text-muted); line-height: 1.7; max-width: 520px; margin: 20px 0 40px; font-weight: 400; }
+  .hero-sub strong { color: var(--white-soft); font-weight: 500; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
+  .tag { padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid; }
+  .tag-yellow { background: rgba(245,200,66,0.1); color: var(--yellow); border-color: rgba(245,200,66,0.25); }
+  .tag-avocado { background: rgba(74,92,58,0.2); color: var(--avocado-muted); border-color: rgba(74,92,58,0.4); }
+  .tag-navy { background: rgba(30,45,74,0.3); color: var(--navy-muted); border-color: rgba(30,45,74,0.6); }
+  .tag-grey { background: rgba(58,58,58,0.3); color: var(--text-muted); border-color: var(--grey-light); }
+  .section-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; font-weight: 600; padding: 0 40px; }
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; padding: 0 40px 60px; }
+  .project-card { background: var(--dark); border: 1px solid var(--grey-mid); border-radius: 12px; padding: 24px; cursor: pointer; transition: border-color 0.2s, transform 0.2s; position: relative; overflow: hidden; }
+  .project-card:hover { border-color: var(--grey-light); transform: translateY(-2px); }
+  .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent-color, var(--yellow)); opacity: 0.6; }
+  .card-icon { font-size: 28px; margin-bottom: 14px; display: block; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .card-badge { display: inline-block; margin-top: 14px; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+  .badge-live { background: rgba(74,92,58,0.25); color: var(--avocado-muted); }
+  .badge-wip { background: rgba(245,200,66,0.12); color: var(--yellow-soft); }
+  .badge-idea { background: rgba(30,45,74,0.3); color: var(--navy-muted); }
+  .footer-ribbon { padding: 16px 20px; border-top: 1px solid var(--grey-mid); background: var(--dark); z-index: 20; position: relative; }
+  .backpack-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--yellow); color: var(--black); font-weight: 900; letter-spacing: 0.12em; padding: 8px; border-radius: 6px; font-family: 'Syne', sans-serif; width: 100%; justify-content: center; font-size: 10px; }
+</style>
 </head>
 <body>
-    <h1>🐒 Monkey Business Labs</h1>
-    <p>AI experiments, built from scraps.</p>
+
+<div class="left-ribbon">
+  <div class="ribbon-logo">
+    <div class="brand">🐒 Monkey Business Labs</div>
+    <div class="tagline"><span>Your Corp IT's worst nightmare.</span><br>Building since Day One.</div>
+  </div>
+  <nav class="nav">
+    <a class="nav-item active" href="#"><span class="banana-icon">🍌</span> Projects</a>
+    <a class="nav-item" href="#"><span class="banana-icon">🍌</span> About</a>
+    <a class="nav-item" href="#"><span class="banana-icon">🍌</span> Stack</a>
+    <a class="nav-item" href="#"><span class="banana-icon">🍌</span> Contact</a>
+  </nav>
+  <div class="skyscraper-scene">
+    <div class="building b1"></div>
+    <div class="building b2"></div>
+    <div class="building b3"></div>
+    <div class="building b4"></div>
+    <div class="building b5"></div>
+    <div class="building b6"></div>
+    <div class="win" style="left:24px;bottom:160px"></div>
+    <div class="win off" style="left:32px;bottom:140px"></div>
+    <div class="win navy" style="left:24px;bottom:120px"></div>
+    <div class="win" style="left:60px;bottom:220px"></div>
+    <div class="win off" style="left:72px;bottom:200px"></div>
+    <div class="win" style="left:60px;bottom:180px"></div>
+    <div class="win navy" style="left:72px;bottom:160px"></div>
+    <div class="win" style="left:108px;bottom:270px"></div>
+    <div class="win off" style="left:120px;bottom:250px"></div>
+    <div class="win" style="left:108px;bottom:230px"></div>
+    <div class="win" style="left:120px;bottom:210px"></div>
+    <div class="win navy" style="left:108px;bottom:190px"></div>
+    <div class="win" style="left:182px;bottom:300px"></div>
+    <div class="win off" style="left:196px;bottom:280px"></div>
+    <div class="win navy" style="left:210px;bottom:260px"></div>
+    <div class="win" style="left:182px;bottom:240px"></div>
+    <div class="win" style="left:196px;bottom:220px"></div>
+    <div class="win off" style="left:240px;bottom:190px"></div>
+    <div class="win" style="left:252px;bottom:170px"></div>
+    <div class="gorilla">
+      <svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="40" cy="65" rx="22" ry="28" fill="#1a1a2e"/>
+        <rect x="36" y="48" width="8" height="22" rx="2" fill="#2e4066"/>
+        <polygon points="40,70 35,65 45,65" fill="#2e4066"/>
+        <ellipse cx="40" cy="32" rx="18" ry="17" fill="#1a1a2e"/>
+        <ellipse cx="22" cy="32" rx="5" ry="6" fill="#1a1a2e"/>
+        <ellipse cx="58" cy="32" rx="5" ry="6" fill="#1a1a2e"/>
+        <ellipse cx="40" cy="36" rx="12" ry="10" fill="#2a2040"/>
+        <circle cx="34" cy="30" r="3.5" fill="#f5c842"/>
+        <circle cx="46" cy="30" r="3.5" fill="#f5c842"/>
+        <circle cx="35" cy="30" r="1.5" fill="#0a0a0a"/>
+        <circle cx="47" cy="30" r="1.5" fill="#0a0a0a"/>
+        <line x1="31" y1="26" x2="38" y2="28" stroke="#4a5c3a" stroke-width="2" stroke-linecap="round"/>
+        <line x1="49" y1="26" x2="42" y2="28" stroke="#4a5c3a" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="37" cy="37" r="2" fill="#0d0d1a"/>
+        <circle cx="43" cy="37" r="2" fill="#0d0d1a"/>
+        <path d="M18 55 Q5 40 8 28" stroke="#1a1a2e" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <path d="M62 55 Q75 40 72 28" stroke="#1a1a2e" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <circle cx="8" cy="26" r="7" fill="#1a1a2e"/>
+        <circle cx="72" cy="26" r="7" fill="#1a1a2e"/>
+        <path d="M28 90 Q22 95 20 100" stroke="#1a1a2e" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <path d="M52 90 Q58 95 60 100" stroke="#1a1a2e" stroke-width="10" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="monkey monkey-1">
+      <svg viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="14" cy="10" rx="8" ry="8" fill="#3a2a1a"/>
+        <ellipse cx="7" cy="10" rx="3" ry="3.5" fill="#3a2a1a"/>
+        <ellipse cx="21" cy="10" rx="3" ry="3.5" fill="#3a2a1a"/>
+        <ellipse cx="14" cy="13" rx="5" ry="4" fill="#5a3a1a"/>
+        <circle cx="11" cy="9" r="2" fill="#f5c842"/>
+        <circle cx="17" cy="9" r="2" fill="#f5c842"/>
+        <circle cx="11.5" cy="9" r="1" fill="#0a0a0a"/>
+        <circle cx="17.5" cy="9" r="1" fill="#0a0a0a"/>
+        <ellipse cx="14" cy="22" rx="7" ry="8" fill="#3a2a1a"/>
+        <rect x="17" y="17" width="10" height="12" rx="2" fill="#f5c842"/>
+        <rect x="18" y="18" width="8" height="5" rx="1" fill="#0a0a0a"/>
+        <text x="19" y="22" font-size="3.5" fill="#f5c842" font-weight="900" font-family="monospace">MB</text>
+        <path d="M7 20 Q2 16 3 12" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M21 20 Q25 16 24 12" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M10 28 Q8 32 9 36" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M18 28 Q20 32 19 36" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="monkey monkey-2">
+      <svg viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="14" cy="10" rx="8" ry="8" fill="#3a2a1a"/>
+        <ellipse cx="7" cy="10" rx="3" ry="3.5" fill="#3a2a1a"/>
+        <ellipse cx="21" cy="10" rx="3" ry="3.5" fill="#3a2a1a"/>
+        <ellipse cx="14" cy="13" rx="5" ry="4" fill="#5a3a1a"/>
+        <circle cx="11" cy="9" r="2" fill="#f5c842"/>
+        <circle cx="17" cy="9" r="2" fill="#f5c842"/>
+        <circle cx="11.5" cy="9" r="1" fill="#0a0a0a"/>
+        <circle cx="17.5" cy="9" r="1" fill="#0a0a0a"/>
+        <ellipse cx="14" cy="22" rx="7" ry="8" fill="#3a2a1a"/>
+        <rect x="17" y="17" width="10" height="12" rx="2" fill="#f5c842"/>
+        <rect x="18" y="18" width="8" height="5" rx="1" fill="#0a0a0a"/>
+        <text x="19" y="22" font-size="3.5" fill="#f5c842" font-weight="900" font-family="monospace">MB</text>
+        <path d="M7 20 Q2 16 3 12" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M21 20 Q25 16 24 12" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M10 28 Q8 32 9 36" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M18 28 Q20 32 19 36" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="monkey monkey-3">
+      <svg viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="14" cy="10" rx="8" ry="8" fill="#3a2a1a"/>
+        <ellipse cx="7" cy="10" rx="3" ry="3.5" fill="#3a2a1a"/>
+        <ellipse cx="21" cy="10" rx="3" ry="3.5" fill="#3a2a1a"/>
+        <ellipse cx="14" cy="13" rx="5" ry="4" fill="#5a3a1a"/>
+        <circle cx="11" cy="9" r="2" fill="#f5c842"/>
+        <circle cx="17" cy="9" r="2" fill="#f5c842"/>
+        <circle cx="11.5" cy="9" r="1" fill="#0a0a0a"/>
+        <circle cx="17.5" cy="9" r="1" fill="#0a0a0a"/>
+        <ellipse cx="14" cy="22" rx="7" ry="8" fill="#3a2a1a"/>
+        <rect x="17" y="17" width="10" height="12" rx="2" fill="#f5c842"/>
+        <rect x="18" y="18" width="8" height="5" rx="1" fill="#0a0a0a"/>
+        <text x="19" y="22" font-size="3.5" fill="#f5c842" font-weight="900" font-family="monospace">MB</text>
+        <path d="M7 20 Q2 16 3 12" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M21 20 Q25 16 24 12" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M10 28 Q8 32 9 36" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M18 28 Q20 32 19 36" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+  </div>
+  <div class="footer-ribbon">
+    <div class="backpack-badge">🤖 MB LABS — monkeybusinesslabs.ai</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Projects // AI Experiments</div>
+    <div class="status-dot"><div class="dot"></div>Live & building</div>
+  </div>
+  <div class="hero">
+    <div class="hero-eyebrow">// citizen engineer. shadow IT survivor.</div>
+    <h1 class="hero-title">
+      Built from<br>
+      <span class="accent">scraps.</span><br>
+      <span class="avocado">Shipped anyway.</span>
+    </h1>
+    <p class="hero-sub">
+      20 years of <strong>business ideas</strong> with no way to build them.
+      Now armed with AI, a wiped MacBook, and <strong>zero fear of IT's gorilla.</strong>
+      Welcome to the lab.
+    </p>
+    <div class="tags">
+      <span class="tag tag-yellow">AI Builder</span>
+      <span class="tag tag-avocado">No-Code → Code</span>
+      <span class="tag tag-navy">Shadow IT</span>
+      <span class="tag tag-grey">Business Hacker</span>
+      <span class="tag tag-yellow">Citizen Engineer</span>
+      <span class="tag tag-avocado">Scrappy by design</span>
+    </div>
+  </div>
+  <div class="section-label">// active experiments</div>
+  <div class="project-grid">
+    <div class="project-card" style="--accent-color: #f5c842;">
+      <span class="card-icon">🧠</span>
+      <div class="card-title">Project Alpha</div>
+      <div class="card-desc">First experiment off the bench. Built with duct tape, Claude, and spite.</div>
+      <div class="card-badge badge-wip">In progress</div>
+    </div>
+    <div class="project-card" style="--accent-color: #4a5c3a;">
+      <span class="card-icon">⚡</span>
+      <div class="card-title">Automation Lab</div>
+      <div class="card-desc">Making computers do the boring stuff so humans can do the interesting stuff.</div>
+      <div class="card-badge badge-live">Live</div>
+    </div>
+    <div class="project-card" style="--accent-color: #2e4066;">
+      <span class="card-icon">🔧</span>
+      <div class="card-title">The Backlog</div>
+      <div class="card-desc">20 years of ideas finally getting their day. One domain at a time.</div>
+      <div class="card-badge badge-idea">Coming soon</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      this.classList.add('active');
+      const banana = this.querySelector('.banana-icon');
+      banana.style.animation = 'none';
+      banana.offsetHeight;
+      banana.style.animation = 'spin360 0.6s ease forwards';
+    });
+  });
+</script>
 </body>
 </html>
