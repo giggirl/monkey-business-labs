@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About · Monkey Business Labs</title>
+<link rel="icon" type="image/png" href="MBLabs_Icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --grey-mid: #2a2a2a;
+    --yellow: #f5c842;
+    --avocado-muted: #8a9e78;
+    --white: #f8f6f0;
+    --white-soft: #e8e6e0;
+    --text-muted: #888880;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+  .container { max-width: 580px; width: 100%; text-align: center; }
+  .icon { width: 100px; margin: 0 auto 24px; display: block; }
+  .header { font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 48px; font-style: italic; }
+  .header strong { color: var(--white-soft); font-style: normal; font-weight: 600; }
+  .haiku-wrap {
+    border: 1px solid var(--grey-mid);
+    border-radius: 16px;
+    padding: 40px 40px;
+    background: var(--dark);
+    margin-bottom: 40px;
+    position: relative;
+    text-align: left;
+  }
+  .haiku-label {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--yellow);
+    color: var(--black);
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .haiku { font-family: 'Syne', sans-serif; font-size: clamp(20px, 4vw, 30px); font-weight: 800; line-height: 1.7; }
+  .haiku-line { display: block; min-height: 1.7em; overflow: hidden; }
+  .line1 { color: var(--white); }
+  .line2 { color: var(--yellow); }
+  .line3 { color: var(--avocado-muted); }
+  .cursor { display: inline-block; width: 3px; height: 1em; background: var(--yellow); margin-left: 2px; vertical-align: middle; animation: blink 0.7s step-end infinite; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  .signature { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--yellow); letter-spacing: 0.1em; margin-top: 28px; text-align: right; opacity: 0; transition: opacity 0.8s ease; }
+  .back-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 40px; padding: 10px 24px; border: 1px solid var(--grey-mid); border-radius: 100px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: all 0.2s; }
+  .back-link:hover { border-color: var(--yellow); color: var(--yellow); }
+  .footer-text { margin-top: 48px; font-size: 11px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="container">
+  <img src="MBLabs_Icon.png" alt="MB Labs" class="icon">
+  <div class="header">
+    My monkey nose might be brown<br>
+    but this ain't <strong>StinkedIn...</strong><br>
+    for you I Haiku 🐒
+  </div>
+  <div class="haiku-wrap">
+    <div class="haiku-label">// about</div>
+    <div class="haiku">
+      <span class="haiku-line line1" id="line1"></span>
+      <span class="haiku-line line2" id="line2"></span>
+      <span class="haiku-line line3" id="line3"></span>
+    </div>
+    <div class="signature" id="signature">xoxo DLUX</div>
+  </div>
+  <a href="index.html" class="back-link">🍌 Back to the Lab</a>
+  <div class="footer-text">monkeybusinesslabs.ai · Chief Chaos Engineer</div>
+</div>
+
+<script>
+  const lines = [
+    { id: 'line1', text: 'Where art thou, Neo' },
+    { id: 'line2', text: 'Seminal brothers collude' },
+    { id: 'line3', text: 'Rise we fling at dawn' },
+  ];
+
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+
+  function typeLine(lineIndex) {
+    if (lineIndex >= lines.length) {
+      setTimeout(() => {
+        document.getElementById('signature').style.opacity = '1';
+      }, 400);
+      return;
+    }
+    const { id, text } = lines[lineIndex];
+    const el = document.getElementById(id);
+    el.appendChild(cursor);
+    let charIndex = 0;
+    const interval = setInterval(() => {
+      if (charIndex < text.length) {
+        el.insertBefore(document.createTextNode(text[charIndex]), cursor);
+        charIndex++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => typeLine(lineIndex + 1), 380);
+      }
+    }, 55);
+  }
+
+  setTimeout(() => typeLine(0), 600);
+</script>
+</body>
+</html>
