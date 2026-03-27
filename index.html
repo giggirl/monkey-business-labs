@@ -272,33 +272,44 @@
 </div>
 
 <script>
-  // Ribbon fade
+   // Ribbon fade then collapse
   const ribbon = document.querySelector('.left-ribbon');
-  let fadeTimer = setTimeout(() => {
-    ribbon.style.transition = 'opacity 1s ease';
+  ribbon.style.transition = 'opacity 1s ease, width 0.4s ease, min-width 0.4s ease';
+
+  // Stage 1 - fade after 5 seconds
+  let collapseTimer = setTimeout(() => {
     ribbon.style.opacity = '0.15';
+
+    // Stage 2 - collapse 5 seconds after fade
+    setTimeout(() => {
+      ribbon.style.width = '8px';
+      ribbon.style.minWidth = '8px';
+      ribbon.style.borderRight = '8px solid #f5c842';
+      ribbon.style.overflow = 'hidden';
+      ribbon.style.opacity = '1';
+    }, 5000);
+
   }, 5000);
 
   ribbon.addEventListener('mouseenter', () => {
+    clearTimeout(collapseTimer);
     ribbon.style.opacity = '1';
-    clearTimeout(fadeTimer);
+    ribbon.style.width = '280px';
+    ribbon.style.minWidth = '280px';
+    ribbon.style.borderRight = '';
+    ribbon.style.overflow = 'hidden';
   });
 
   ribbon.addEventListener('mouseleave', () => {
-    fadeTimer = setTimeout(() => {
+    collapseTimer = setTimeout(() => {
       ribbon.style.opacity = '0.15';
+      setTimeout(() => {
+        ribbon.style.width = '8px';
+        ribbon.style.minWidth = '8px';
+        ribbon.style.borderRight = '8px solid #f5c842';
+        ribbon.style.opacity = '1';
+      }, 5000);
     }, 3000);
-  });
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      this.classList.add('active');
-      const banana = this.querySelector('.banana-icon');
-      banana.style.animation = 'none';
-      banana.offsetHeight;
-      banana.style.animation = 'spin360 0.6s ease forwards';
-    });
   });
 </script>
 </body>
