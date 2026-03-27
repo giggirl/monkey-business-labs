@@ -229,7 +229,7 @@
     <div class="status-dot"><div class="dot"></div>Live & building</div>
   </div>
   <div class="hero">
-    <img src="MBLabs_Icon.png" style="width:640px; margin-bottom:16px; display:block; margin-left:-160px;">
+    <img src="MBLabs_Icon.png" style="width:220px; margin-bottom:8px; display:block;">
     <div class="hero-eyebrow">// citizen engineer. shadow IT survivor.</div>
     <h1 class="hero-title">
       Built from<br>
@@ -272,6 +272,23 @@
 </div>
 
 <script>
+  // Ribbon fade
+  const ribbon = document.querySelector('.left-ribbon');
+  let fadeTimer = setTimeout(() => {
+    ribbon.style.transition = 'opacity 1s ease';
+    ribbon.style.opacity = '0.15';
+  }, 5000);
+
+  ribbon.addEventListener('mouseenter', () => {
+    ribbon.style.opacity = '1';
+    clearTimeout(fadeTimer);
+  });
+
+  ribbon.addEventListener('mouseleave', () => {
+    fadeTimer = setTimeout(() => {
+      ribbon.style.opacity = '0.15';
+    }, 3000);
+  });
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function(e) {
       e.preventDefault();
