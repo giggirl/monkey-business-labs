@@ -35,7 +35,15 @@ TONE: [tone word]`
     })
   });
 
-  const data = await response.json();
+const data = await response.json();
+  console.log('Status:', response.status);
+  console.log('Data:', JSON.stringify(data));
+  if (!data.content || !data.content[0]) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'API error', details: data })
+    };
+  }
   const text = data.content[0].text;
   
   const lines = text.trim().split('\n');
