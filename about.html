@@ -117,6 +117,78 @@
     60%  { opacity: 0.8; transform: translateY(-300px) rotate(-8deg) scale(1.05); }
     100% { opacity: 0; transform: translateY(-700px) rotate(10deg) scale(0.8); }
   }
+
+.generator-wrap {
+    margin-top: 40px;
+    border: 1px solid var(--grey-mid);
+    border-radius: 16px;
+    padding: 32px;
+    background: var(--dark);
+    position: relative;
+    text-align: left;
+  }
+  .generator-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  textarea {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid var(--grey-mid);
+    border-radius: 8px;
+    padding: 16px;
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 100px;
+    margin-bottom: 16px;
+  }
+  textarea:focus { outline: none; border-color: var(--yellow); }
+  textarea::placeholder { color: var(--text-muted); }
+  button {
+    width: 100%;
+    padding: 14px;
+    background: var(--yellow);
+    color: var(--black);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .haiku-output {
+    margin-top: 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: 800;
+    line-height: 1.7;
+  }
+  .output-line { opacity: 0; transform: translateY(8px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .output-line.visible { opacity: 1; transform: translateY(0); }
+  .out-line1 { color: var(--white); }
+  .out-line2 { color: var(--yellow); }
+  .out-line3 { color: var(--avocado-muted); }
+  .loading { text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 16px; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .tone-icon { position: fixed; font-size: 40px; opacity: 0; pointer-events: none; z-index: 999; }
+  @keyframes float-up {
+    0%   { opacity: 1; transform: translateY(0) rotate(-5deg) scale(1); }
+    20%  { opacity: 1; transform: translateY(-80px) rotate(5deg) scale(1.1); }
+    60%  { opacity: 0.8; transform: translateY(-300px) rotate(-8deg) scale(1.05); }
+    100% { opacity: 0; transform: translateY(-700px) rotate(10deg) scale(0.8); }
+  }
+
 </style>
 </head>
 <body>
@@ -125,8 +197,7 @@
   <img src="MBLabs_Icon.png" alt="MB Labs" class="icon">
 
   <div class="header">
-    My monkey nose might be brown<br>
-    but this ain't &nbsp;<strong>StinkedIn...</strong><br>
+    Were you expecting a bio? We are just here to play ...
     for you I Haiku 🐒
   </div>
 
@@ -140,6 +211,22 @@
     <div class="signature" id="signature">xoxo DLUX</div>
   </div>
 
+  <!-- RANT TO HAIKU GENERATOR -->
+<div class="generator-wrap">
+  <div class="generator-label">// rant. we haiku.</div>
+  <textarea id="rant-input" placeholder="Tell us about your day... the ticket that's been open 6 months, the meeting that could have been an email, the access you still don't have..."></textarea>
+  <button id="generate-btn" onclick="generateHaiku()">🐒 Generate My Rage Haiku</button>
+  <div id="haiku-output" class="haiku-output" style="display:none;">
+    <div class="output-line line1" id="out1"></div>
+    <div class="output-line line2" id="out2"></div>
+    <div class="output-line line3" id="out3"></div>
+  </div>
+  <div id="loading" style="display:none;" class="loading">🐒 channeling your rage...</div>
+</div>
+
+<!-- TONE BALLOON -->
+<div class="tone-icon" id="tone-icon"></div>
+
   <a href="index.html" class="back-link">🍌 Back to the Lab</a>
   <div class="footer-text">monkeybusinesslabs.ai · Chief Chaos Engineer</div>
 </div>
@@ -150,7 +237,7 @@
   const lines = [
     { id: 'line1', text: 'Where art thou, Neo' },
     { id: 'line2', text: 'Seminal brothers collude' },
-    { id: 'line3', text: 'Rise we fling at dawn' },
+    { id: 'line3', text: 'Rise we build at dawn' },
   ];
 
   const cursor = document.createElement('span');
@@ -189,6 +276,76 @@
   }
 
   setTimeout(() => typeLine(0), 600);
+
+const toneIcons = {
+    RAGE: '🔥',
+    EXHAUSTED: '😴',
+    OVERWHELMED: '💥',
+    REBELLIOUS: '🍌',
+    DEFEATED: '🌧️',
+    VICTORIOUS: '🎈',
+    ABSURD: '🐒',
+    ENERGIZED: '🚀'
+  };
+
+  async function generateHaiku() {
+    const rant = document.getElementById('rant-input').value.trim();
+    if (!rant) return;
+
+    const btn = document.getElementById('generate-btn');
+    const loading = document.getElementById('loading');
+    const output = document.getElementById('haiku-output');
+
+    btn.disabled = true;
+    loading.style.display = 'block';
+    output.style.display = 'none';
+
+    try {
+      const res = await fetch('/.netlify/functions/haiku', {
+        method: 'POST',
+        body: JSON.stringify({ rant })
+      });
+
+      const data = await res.json();
+      const { haiku, tone } = data;
+
+      document.getElementById('out1').textContent = haiku[0] || '';
+      document.getElementById('out2').textContent = haiku[1] || '';
+      document.getElementById('out3').textContent = haiku[2] || '';
+
+      document.getElementById('out1').className = 'output-line out-line1';
+      document.getElementById('out2').className = 'output-line out-line2';
+      document.getElementById('out3').className = 'output-line out-line3';
+
+      loading.style.display = 'none';
+      output.style.display = 'block';
+
+      setTimeout(() => document.getElementById('out1').classList.add('visible'), 100);
+      setTimeout(() => document.getElementById('out2').classList.add('visible'), 400);
+      setTimeout(() => document.getElementById('out3').classList.add('visible'), 700);
+
+      // launch tone icon
+      setTimeout(() => launchToneIcon(tone), 1200);
+
+    } catch (err) {
+      loading.style.display = 'none';
+      btn.disabled = false;
+    }
+    btn.disabled = false;
+  }
+
+  function launchToneIcon(tone) {
+    const icon = toneIcons[tone] || '🐒';
+    const el = document.getElementById('tone-icon');
+    const btn = document.getElementById('generate-btn');
+    const rect = btn.getBoundingClientRect();
+    el.textContent = icon;
+    el.style.left = (rect.left + rect.width / 2) + 'px';
+    el.style.top = rect.top + 'px';
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'float-up 3.5s ease-out forwards';
+  }
 </script>
 </body>
 </html>
